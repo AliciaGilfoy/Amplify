@@ -42,6 +42,30 @@ function sanitizeBody(body) {
 }
 
 class ProfileService {
+  async edit(email, data) {
+    let positive = await dbContext.Profile.findOneAndUpdate({ email }, { positiveRecommend: data }, { new: true })
+    return positive;
+  }
+  async editTotal(email, data) {
+    let total = await dbContext.Profile.findOneAndUpdate({ email }, { totalRecommends: data }, { new: true })
+    return total;
+  }
+  async editUsername(email, data) {
+    let username = await dbContext.Profile.findOneAndUpdate({ email }, { username: data }, { new: true })
+    return username;
+  }
+
+  async create(rawData) {
+    let data = await dbContext.Profile.create(rawData)
+    return data
+  }
+  async getById(id, userEmail) {
+    let data = await dbContext.Profile.findOne({ _id: id, creatorEmail: userEmail })
+    return data
+  }
+
+
+
   /**
    * Provided an array of user emails will return an array of user profiles with email picture and name
    * @param {String[]} emails Array of email addresses to lookup users by
