@@ -1,4 +1,5 @@
 import { dbContext } from "../db/DbContext";
+import { BadRequest } from "../utils/Errors";
 
 // Private Methods
 
@@ -42,6 +43,40 @@ function sanitizeBody(body) {
 }
 
 class ProfileService {
+  async addPositive(email) {
+    let profile = await dbContext.Profile.findOne({ email })
+    if (!profile) {
+      throw new BadRequest("Invalid Id")
+    }
+    // @ts-ignore
+    profile.positiveRecommend++
+    await profile.save()
+    return profile;
+  }
+  async edit(email, data) {
+    let positive = await dbContext.Profile.findOneAndUpdate({ email }, { positiveRecommend: data }, { new: true })
+    return positive;
+  }
+  async editTotal(email, data) {
+    let total = await dbContext.Profile.findOneAndUpdate({ email }, { totalRecommends: data }, { new: true })
+    return total;
+  }
+  async editUsername(email, data) {
+    let username = await dbContext.Profile.findOneAndUpdate({ email }, { username: data }, { new: true })
+    return username;
+  }
+
+  async create(rawData) {
+    let data = await dbContext.Profile.create(rawData)
+    return data
+  }
+  async getById(id, userEmail) {
+    let data = await dbContext.Profile.findOne({ _id: id, creatorEmail: userEmail })
+    return data
+  }
+
+
+
   /**
    * Provided an array of user emails will return an array of user profiles with email picture and name
    * @param {String[]} emails Array of email addresses to lookup users by
